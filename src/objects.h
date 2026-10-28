@@ -1,6 +1,8 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
+#include <stdbool.h>
+
 typedef struct {
     float x, y;
     float speed; /* px/s */

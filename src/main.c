@@ -23,6 +23,9 @@ void spawn_comet(Comet c[], int size);
 void draw_comets(const Comet c[], int size);
 void update_comets(Comet c[], int size, float dt);
 
+void colide_bullets(Bullet b[], int bSize, Comet c[], int cSize,
+                    SpaceShip *ship);
+
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
     SetTargetFPS(60);
@@ -47,6 +50,7 @@ int main(void) {
         update_bullets(bullets, NUM_BULLETS, dt);
         spawn_comet(comets, NUM_COMETS);
         update_comets(comets, NUM_COMETS, dt);
+        colide_bullets(bullets, NUM_BULLETS, comets, NUM_COMETS, &ship);
 
         /* DESENHAR */
         BeginDrawing();
@@ -171,6 +175,26 @@ void update_comets(Comet c[], int size, float dt) {
             c[i].x -= c[i].speed * dt;
             if (c[i].x < 0)
                 c[i].active = false;
+        }
+    }
+}
+
+void colide_bullets(Bullet b[], int bSize, Comet c[], int cSize,
+                    SpaceShip *ship) {
+    for (int i = 0; i < bSize; i++) {
+        if (!b[i].active)
+            continue;
+        for (int j = 0; j < cSize; j++) {
+            if (!c[j].active)
+                continue;
+            if (b[i].x > c[j].x - c[j].limit_x &&
+                b[i].x < c[j].x + c[j].limit_x &&
+                b[i].y > c[j].y - c[j].limit_y &&
+                b[i].y < c[j].y + c[j].limit_y) {
+                b[i].active = false;
+                c[j].active = false;
+                ship->score++;
+            }
         }
     }
 }
