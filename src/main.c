@@ -41,28 +41,51 @@ int main(void) {
     Comet comets[NUM_COMETS];
     init_comets(comets, NUM_COMETS);
 
+    bool game_over = false;
+
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
-        /* ATUALIZAR */
-        move_ship(&ship, dt);
-        if (IsKeyPressed(KEY_SPACE)) {
-            fire_bullet(bullets, NUM_BULLETS, &ship);
+        if (!game_over) {
+            /* ATUALIZAR */
+            move_ship(&ship, dt);
+            if (IsKeyPressed(KEY_SPACE)) {
+                fire_bullet(bullets, NUM_BULLETS, &ship);
+            }
+            update_bullets(bullets, NUM_BULLETS, dt);
+            spawn_comet(comets, NUM_COMETS);
+            update_comets(comets, NUM_COMETS, dt);
+            colide_bullets(bullets, NUM_BULLETS, comets, NUM_COMETS, &ship);
+            colide_comets(comets, NUM_COMETS, &ship);
+            if (ship.lives <= 0)
+                game_over = true;
+        } else if (IsKeyPressed(KEY_ENTER)) { /* reiniciar */
+            init_ship(&ship);
+            init_bullets(bullets, NUM_BULLETS);
+            init_comets(comets, NUM_COMETS);
+            game_over = false;
         }
-        update_bullets(bullets, NUM_BULLETS, dt);
-        spawn_comet(comets, NUM_COMETS);
-        update_comets(comets, NUM_COMETS, dt);
-        colide_bullets(bullets, NUM_BULLETS, comets, NUM_COMETS, &ship);
-        colide_comets(comets, NUM_COMETS, &ship);
-
         /* DESENHAR */
-        BeginDrawing();
-        ClearBackground(BLACK);
-        draw_ship(&ship);
-        draw_bullets(bullets, NUM_BULLETS);
-        draw_comets(comets, NUM_COMETS);
-        DrawText(TextFormat("Lives: %d   Score: %d", ship.lives, ship.score), 5,
-                 5, 20, WHITE);
+        if (!game_over) {
+            BeginDrawing();
+            ClearBackground(BLACK);
+            draw_ship(&ship);
+            draw_bullets(bullets, NUM_BULLETS);
+            draw_comets(comets, NUM_COMETS);
+            DrawText(
+                TextFormat("Lives: %d   Score: %d", ship.lives, ship.score), 5,
+                5, 20, WHITE);
+
+        } else {
+            const char *msg = TextFormat("End of game. Score: %d", ship.score);
+            int txt_width = MeasureText(msg, 30);
+            DrawText(msg, (SCREEN_WIDTH - txt_width) / 2,
+                     SCREEN_HEIGHT / 2 - 30, 30, WHITE);
+            DrawText("ENTER to restart",
+                     (SCREEN_WIDTH - MeasureText("ENTER to restart", 20)) / 2,
+                     SCREEN_HEIGHT / 2 + 10, 20, GRAY);
+        }
+
         EndDrawing();
     }
     CloseWindow();
