@@ -14,6 +14,7 @@ void move_ship(SpaceShip *ship, float dt);
 void init_bullets(Bullet b[], int size);
 void fire_bullet(Bullet b[], int size, const SpaceShip *ship);
 void draw_bullets(const Bullet b[], int size);
+void update_bullets(Bullet b[], int size, float dt);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -33,6 +34,7 @@ int main(void) {
         if (IsKeyPressed(KEY_SPACE)) {
             fire_bullet(bullets, NUM_BULLETS, &ship);
         }
+        update_bullets(bullets, NUM_BULLETS, dt);
 
         /* DESENHAR */
         BeginDrawing();
@@ -110,4 +112,14 @@ void draw_bullets(const Bullet b[], int size) {
     for (int i = 0; i < size; i++)
         if (b[i].active)
             DrawCircle((int)b[i].x, (int)b[i].y, 2.0f, WHITE);
+}
+
+void update_bullets(Bullet b[], int size, float dt) {
+    for (int i = 0; i < size; i++) {
+        if (b[i].active) {
+            b[i].x += b[i].speed * dt;
+            if (b[i].x > SCREEN_WIDTH)
+                b[i].active = false; /* saiu da tela */
+        }
+    }
 }
