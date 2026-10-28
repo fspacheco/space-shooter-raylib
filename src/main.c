@@ -7,6 +7,7 @@
 /* protótipos */
 void init_ship(SpaceShip *ship);
 void draw_ship(const SpaceShip *ship);
+void move_ship(SpaceShip *ship, float dt);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -17,6 +18,10 @@ int main(void) {
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
+
+        /* ATUALIZAR */
+        move_ship(&ship, dt);
+
         /* DESENHAR */
         BeginDrawing();
         ClearBackground(BLACK);
@@ -47,4 +52,25 @@ void draw_ship(const SpaceShip *ship) {
     DrawRectangle((int)x - 17, (int)y + 3, 5, 6, MAROON);
     /* parte central */
     DrawRectangle((int)x - 12, (int)y - 2, 27, 4, BLUE);
+}
+
+void move_ship(SpaceShip *ship, float dt) {
+    if (IsKeyDown(KEY_UP))
+        ship->y -= ship->speed * dt;
+    if (IsKeyDown(KEY_DOWN))
+        ship->y += ship->speed * dt;
+    if (IsKeyDown(KEY_LEFT))
+        ship->x -= ship->speed * dt;
+    if (IsKeyDown(KEY_RIGHT))
+        ship->x += ship->speed * dt;
+
+    /* limites: só pode andar no primeiro terço da tela */
+    if (ship->y < 0)
+        ship->y = 0;
+    if (ship->y > SCREEN_HEIGHT)
+        ship->y = SCREEN_HEIGHT;
+    if (ship->x < 0)
+        ship->x = 0;
+    if (ship->x > SCREEN_WIDTH / 3)
+        ship->x = SCREEN_WIDTH / 3;
 }
