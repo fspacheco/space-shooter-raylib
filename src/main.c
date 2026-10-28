@@ -1,5 +1,6 @@
 #include "objects.h" /* definições das structs */
 #include "raylib.h"
+#include <stdio.h>
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 400;
@@ -60,6 +61,8 @@ int main(void) {
         draw_ship(&ship);
         draw_bullets(bullets, NUM_BULLETS);
         draw_comets(comets, NUM_COMETS);
+        DrawText(TextFormat("Lives: %d   Score: %d", ship.lives, ship.score), 5,
+                 5, 20, WHITE);
         EndDrawing();
     }
     CloseWindow();
@@ -175,8 +178,6 @@ void update_comets(Comet c[], int size, float dt) {
     for (int i = 0; i < size; i++) {
         if (c[i].active) {
             c[i].x -= c[i].speed * dt;
-            if (c[i].x < 0)
-                c[i].active = false;
         }
     }
 }
@@ -209,11 +210,12 @@ void colide_comets(Comet c[], int size, SpaceShip *ship) {
             c[i].x + c[i].limit_x > ship->x - ship->limit_x &&
             c[i].y - c[i].limit_y < ship->y + ship->limit_y &&
             c[i].y + c[i].limit_y > ship->y - ship->limit_y) {
-            ship->score--;
+            ship->lives--;
             c[i].active = false;
         } else if (c[i].x < 0) { /* cometa passou pela nave */
             c[i].active = false;
-            ship->score--;
+            ship->lives--;
+            printf("reduz: %d", ship->lives);
         }
     }
 }
