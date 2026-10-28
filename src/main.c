@@ -21,6 +21,7 @@ void update_bullets(Bullet b[], int size, float dt);
 void init_comets(Comet c[], int size);
 void spawn_comet(Comet c[], int size);
 void draw_comets(const Comet c[], int size);
+void update_comets(Comet c[], int size, float dt);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -45,6 +46,7 @@ int main(void) {
         }
         update_bullets(bullets, NUM_BULLETS, dt);
         spawn_comet(comets, NUM_COMETS);
+        update_comets(comets, NUM_COMETS, dt);
 
         /* DESENHAR */
         BeginDrawing();
@@ -161,4 +163,14 @@ void draw_comets(const Comet c[], int size) {
     for (int i = 0; i < size; i++)
         if (c[i].active)
             DrawCircle((int)c[i].x, (int)c[i].y, 20.0f, RED);
+}
+
+void update_comets(Comet c[], int size, float dt) {
+    for (int i = 0; i < size; i++) {
+        if (c[i].active) {
+            c[i].x -= c[i].speed * dt;
+            if (c[i].x < 0)
+                c[i].active = false;
+        }
+    }
 }
