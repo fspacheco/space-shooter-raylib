@@ -10,4 +10,10 @@ typedef struct {
     int limit_y; /* metade da altura  (colisão) */
 } SpaceShip;
 
+typedef struct {
+    float x, y;
+    bool active; /* o tiro está em voo? */
+    float speed;
+} Bullet;
+
 #endif

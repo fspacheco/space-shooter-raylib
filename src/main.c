@@ -1,13 +1,19 @@
 #include "objects.h" /* definições das structs */
 #include "raylib.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 400
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 400;
+
+const int NUM_BULLETS = 5;
 
 /* protótipos */
 void init_ship(SpaceShip *ship);
 void draw_ship(const SpaceShip *ship);
 void move_ship(SpaceShip *ship, float dt);
+
+void init_bullets(Bullet b[], int size);
+void fire_bullet(Bullet b[], int size, const SpaceShip *ship);
+void draw_bullets(const Bullet b[], int size);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -16,16 +22,23 @@ int main(void) {
     SpaceShip ship;
     init_ship(&ship);
 
+    Bullet bullets[NUM_BULLETS];
+    init_bullets(bullets, NUM_BULLETS);
+
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
         /* ATUALIZAR */
         move_ship(&ship, dt);
+        if (IsKeyPressed(KEY_SPACE)) {
+            fire_bullet(bullets, NUM_BULLETS, &ship);
+        }
 
         /* DESENHAR */
         BeginDrawing();
         ClearBackground(BLACK);
         draw_ship(&ship);
+        draw_bullets(bullets, NUM_BULLETS);
         EndDrawing();
     }
     CloseWindow();
@@ -73,4 +86,28 @@ void move_ship(SpaceShip *ship, float dt) {
         ship->x = 0;
     if (ship->x > SCREEN_WIDTH / 3)
         ship->x = SCREEN_WIDTH / 3;
+}
+
+void init_bullets(Bullet b[], int size) {
+    for (int i = 0; i < size; i++) {
+        b[i].active = false;
+        b[i].speed = 600.0f;
+    }
+}
+
+void fire_bullet(Bullet b[], int size, const SpaceShip *ship) {
+    for (int i = 0; i < size; i++) {
+        if (!b[i].active) { /* primeiro tiro livre */
+            b[i].x = ship->x + 17;
+            b[i].y = ship->y;
+            b[i].active = true;
+            break; /* só um tiro por disparo */
+        }
+    }
+}
+
+void draw_bullets(const Bullet b[], int size) {
+    for (int i = 0; i < size; i++)
+        if (b[i].active)
+            DrawCircle((int)b[i].x, (int)b[i].y, 2.0f, WHITE);
 }
