@@ -25,6 +25,7 @@ void update_comets(Comet c[], int size, float dt);
 
 void colide_bullets(Bullet b[], int bSize, Comet c[], int cSize,
                     SpaceShip *ship);
+void colide_comets(Comet c[], int size, SpaceShip *ship);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -51,6 +52,7 @@ int main(void) {
         spawn_comet(comets, NUM_COMETS);
         update_comets(comets, NUM_COMETS, dt);
         colide_bullets(bullets, NUM_BULLETS, comets, NUM_COMETS, &ship);
+        colide_comets(comets, NUM_COMETS, &ship);
 
         /* DESENHAR */
         BeginDrawing();
@@ -195,6 +197,23 @@ void colide_bullets(Bullet b[], int bSize, Comet c[], int cSize,
                 c[j].active = false;
                 ship->score++;
             }
+        }
+    }
+}
+
+void colide_comets(Comet c[], int size, SpaceShip *ship) {
+    for (int i = 0; i < size; i++) {
+        if (!c[i].active)
+            continue;
+        if (c[i].x - c[i].limit_x < ship->x + ship->limit_x &&
+            c[i].x + c[i].limit_x > ship->x - ship->limit_x &&
+            c[i].y - c[i].limit_y < ship->y + ship->limit_y &&
+            c[i].y + c[i].limit_y > ship->y - ship->limit_y) {
+            ship->score--;
+            c[i].active = false;
+        } else if (c[i].x < 0) { /* cometa passou pela nave */
+            c[i].active = false;
+            ship->score--;
         }
     }
 }
