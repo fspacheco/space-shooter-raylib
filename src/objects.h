@@ -16,4 +16,12 @@ typedef struct {
     float speed;
 } Bullet;
 
+typedef struct {
+    float x, y;
+    bool active;
+    float speed;
+    int limit_x;
+    int limit_y;
+} Comet;
+
 #endif

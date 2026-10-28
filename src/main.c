@@ -6,6 +6,8 @@ const int SCREEN_HEIGHT = 400;
 
 const int NUM_BULLETS = 5;
 
+const int NUM_COMETS = 10;
+
 /* protótipos */
 void init_ship(SpaceShip *ship);
 void draw_ship(const SpaceShip *ship);
@@ -15,6 +17,10 @@ void init_bullets(Bullet b[], int size);
 void fire_bullet(Bullet b[], int size, const SpaceShip *ship);
 void draw_bullets(const Bullet b[], int size);
 void update_bullets(Bullet b[], int size, float dt);
+
+void init_comets(Comet c[], int size);
+void spawn_comet(Comet c[], int size);
+void draw_comets(const Comet c[], int size);
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Shooter");
@@ -26,6 +32,9 @@ int main(void) {
     Bullet bullets[NUM_BULLETS];
     init_bullets(bullets, NUM_BULLETS);
 
+    Comet comets[NUM_COMETS];
+    init_comets(comets, NUM_COMETS);
+
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
 
@@ -35,12 +44,14 @@ int main(void) {
             fire_bullet(bullets, NUM_BULLETS, &ship);
         }
         update_bullets(bullets, NUM_BULLETS, dt);
+        spawn_comet(comets, NUM_COMETS);
 
         /* DESENHAR */
         BeginDrawing();
         ClearBackground(BLACK);
         draw_ship(&ship);
         draw_bullets(bullets, NUM_BULLETS);
+        draw_comets(comets, NUM_COMETS);
         EndDrawing();
     }
     CloseWindow();
@@ -122,4 +133,32 @@ void update_bullets(Bullet b[], int size, float dt) {
                 b[i].active = false; /* saiu da tela */
         }
     }
+}
+
+void init_comets(Comet c[], int size) {
+    for (int i = 0; i < size; i++) {
+        c[i].active = false;
+        c[i].speed = 300.0f;
+        c[i].limit_x = 18;
+        c[i].limit_y = 18;
+    }
+}
+
+void spawn_comet(Comet c[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (!c[i].active) {
+            if (GetRandomValue(0, 499) == 0) { /* chance 1/500 por frame */
+                c[i].active = true;
+                c[i].x = SCREEN_WIDTH;
+                c[i].y = (float)GetRandomValue(30, SCREEN_HEIGHT - 30);
+                break;
+            }
+        }
+    }
+}
+
+void draw_comets(const Comet c[], int size) {
+    for (int i = 0; i < size; i++)
+        if (c[i].active)
+            DrawCircle((int)c[i].x, (int)c[i].y, 20.0f, RED);
 }
