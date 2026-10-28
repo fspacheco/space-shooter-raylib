@@ -1,6 +1,5 @@
 #include "objects.h" /* definições das structs */
 #include "raylib.h"
-#include <stdio.h>
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 400;
@@ -238,7 +237,6 @@ void colide_comets(Comet c[], int size, SpaceShip *ship) {
         } else if (c[i].x < 0) { /* cometa passou pela nave */
             c[i].active = false;
             ship->lives--;
-            printf("reduz: %d", ship->lives);
         }
     }
 }
