@@ -30,6 +30,67 @@
                 "isDefault": true
             },
             "detail": "Tarefa customizada para compilar Raylib no Linux."
+        },
+        {
+            "label": "Premake: gerar Makefiles (baixa o raylib na 1ª vez)",
+            "type": "shell",
+            "command": "./premake5",
+            "args": [
+                "gmake"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [],
+            "detail": "Roda a partir de build/. Na primeira vez baixa o raylib master do GitHub para build/external/ (precisa de internet)."
+        },
+        {
+            "label": "Make: compilar Debug (usa raylib baixado)",
+            "type": "shell",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Premake: gerar Makefiles (baixa o raylib na 1ª vez)",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "detail": "Compila o raylib do fonte e gera bin/Debug/texturas."
+        },
+        {
+            "label": "Make: compilar Release (usa raylib baixado)",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "config=release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Premake: gerar Makefiles (baixa o raylib na 1ª vez)",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Compila o raylib do fonte e gera bin/Release/texturas."
+        },
+        {
+            "label": "Make: limpar",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "Remove os objetos gerados pelo Makefile."
         }
     ]
 }
